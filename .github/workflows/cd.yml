@@ -1,0 +1,44 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: hng12-2-fastapi
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          cd ~/fastapi
+          pwd && ls -la
+          
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Restart FastAPI Service
+        run: |
+          sudo systemctl daemon-reload
+          sudo systemctl enable fastapi
+          sudo systemctl restart fastapi
+          echo "Waiting for service to start..."
+          sleep 10
+          if sudo systemctl is-active --quiet fastapi.service; then
+            echo "Deployment successful!"
+          else
+            echo "Deployment failed!"
+            exit 1
+          fi
