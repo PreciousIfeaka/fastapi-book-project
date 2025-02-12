@@ -7,30 +7,11 @@ on:
 jobs:
   test:
     name: Run Tests
-    runs-on: hng12-2-fastapi
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Debug Before Checkout
-        run: |
-          echo "Checking if repository directory exists before checkout..."
-          ls -la /home/ubuntu/fastapi/ || echo "Directory does not exist"
-
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          clean: true
-          fetch-depth: 1
-          path: ~/fastapi/${{ github.event.repository.name }}
-
-      - name: Debug After Checkout
-        run: |
-          echo "Checking if repository directory exists after checkout..."
-          ls -la $GITHUB_WORKSPACE/fastapi-book-project || echo "Checkout failed"
-
-      - name: Fix Runner Permissions
-        run: |
-          sudo chown -R $USER:$USER ~/fastapi/
-          sudo chmod -R u+rwX ~/fastapi/
 
       - name: Set Up Python
         uses: actions/setup-python@v4
@@ -45,3 +26,21 @@ jobs:
       - name: Run Tests
         run: |
           pytest
+
+      - name: Add "pass" Label if Successful
+        if: success()
+        run: |
+          curl -s -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels \
+          -d '{"labels":["pass"]}'
+
+      - name: Add "fail" Label if Successful
+        if: failure()
+        run: |
+          curl -s -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels \
+          -d '{"labels":["failed"]}'
