@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd ~/fastapi
+          cd ~/fastapi/${{ github.event.repository.name }}/${{ github.event.repository.name }}
           pwd && ls -la
           
           python -m venv venv
