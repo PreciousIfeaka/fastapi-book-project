@@ -9,24 +9,18 @@ jobs:
     runs-on: hng12-2-fastapi
 
     steps:
+      - name: Fix Permissions Before Checkout
+        run: |
+          echo "Fixing ownership of repo directory..."
+          sudo chown -R $USER:$USER ~/fastapi/
+          sudo chmod -R u+rwX ~/fastapi/
+
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Verify Repository Path
-        run: |
-          pwd
-          ls -la
-  
-      - name: Ensure Directory Exists
-        run: |
-          mkdir -p ~/fastapi/${{ github.event.repository.name }}/${{ github.event.repository.name }}
-
-      - name: Fix Directory Permissions
-        run: |
-          sudo chown -R $USER:$USER ~/fastapi/${{ github.event.repository.name }}
-          sudo chmod -R u+rwX ~/fastapi/${{ github.event.repository.name }}
+          clean: true
+          fetch-depth: 1
 
       - name: Set Up Python
         uses: actions/setup-python@v4
