@@ -10,11 +10,10 @@ jobs:
     runs-on: hng12-2-fastapi
 
     steps:
-      - name: Fix File Ownership & Clean Old Files
+      - name: Debug Before Checkout
         run: |
-          sudo rm -rf ~/fastapi/${{ github.event.repository.name }}
-          mkdir -p ~/fastapi/${{ github.event.repository.name }}
-          ls -la ~/fastapi
+          echo "Checking if repository directory exists before checkout..."
+          ls -la /home/ubuntu/fastapi/ || echo "Directory does not exist"
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -23,17 +22,15 @@ jobs:
           fetch-depth: 1
           path: ~/fastapi/${{ github.event.repository.name }}
 
+      - name: Debug After Checkout
+        run: |
+          echo "Checking if repository directory exists after checkout..."
+          ls -la $GITHUB_WORKSPACE/fastapi-book-project || echo "Checkout failed"
+
       - name: Fix Runner Permissions
         run: |
           sudo chown -R $USER:$USER ~/fastapi/
           sudo chmod -R u+rwX ~/fastapi/
-
-      - name: Debug Repository Checkout
-        run: |
-          echo "Current Directory:"
-          pwd
-          echo "Repository Contents:"
-          ls -la ~/fastapi/${{ github.event.repository.name }}
 
       - name: Set Up Python
         uses: actions/setup-python@v4
