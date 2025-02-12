@@ -12,15 +12,19 @@ jobs:
     steps:
       - name: Fix File Ownership & Clean Old Files
         run: |
-          sudo rm -rf ~/fastapi/fastapi-book-project || true
-          sudo chown -R $USER:$USER ~/fastapi
-          sudo chmod -R u+rwX ~/fastapi
+          sudo rm -rf ~/fastapi/${{ github.event.repository.name }}
+          mkdir -p ~/fastapi/${{ github.event.repository.name }}
+          
+      - name: Fix Runner Permissions
+        run: |
+          sudo chown -R $USER:$USER ~/fastapi/
+          sudo chmod -R u+rwX ~/fastapi/
 
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           clean: true
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Set Up Python
         uses: actions/setup-python@v4
