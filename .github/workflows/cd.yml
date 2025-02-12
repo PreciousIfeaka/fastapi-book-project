@@ -29,6 +29,11 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Fix File Ownership
+        run: |
+          sudo chown -R $USER:$USER ~/fastapi/${{ github.event.repository.name }}
+          sudo chmod -R u+rwX ~/fastapi/${{ github.event.repository.name }}
+
       - name: Restart FastAPI Service
         run: |
           sudo systemctl daemon-reload
