@@ -15,11 +15,6 @@ jobs:
           sudo rm -rf ~/fastapi/${{ github.event.repository.name }}
           mkdir -p ~/fastapi/${{ github.event.repository.name }}
           ls -la ~/fastapi
-          
-      - name: Fix Runner Permissions
-        run: |
-          sudo chown -R $USER:$USER ~/fastapi/
-          sudo chmod -R u+rwX ~/fastapi/
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -27,6 +22,11 @@ jobs:
           clean: true
           fetch-depth: 1
           path: ~/fastapi/${{ github.event.repository.name }}
+
+      - name: Fix Runner Permissions
+        run: |
+          sudo chown -R $USER:$USER ~/fastapi/
+          sudo chmod -R u+rwX ~/fastapi/
 
       - name: Debug Repository Checkout
         run: |
