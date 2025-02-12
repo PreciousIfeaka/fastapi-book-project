@@ -14,6 +14,7 @@ jobs:
         run: |
           sudo rm -rf ~/fastapi/${{ github.event.repository.name }}
           mkdir -p ~/fastapi/${{ github.event.repository.name }}
+          ls -la fastapi
           
       - name: Fix Runner Permissions
         run: |
@@ -25,6 +26,14 @@ jobs:
         with:
           clean: true
           fetch-depth: 1
+          path: ~/fastapi/${{ github.event.repository.name }}
+
+      - name: Debug Repository Checkout
+        run: |
+          echo "Current Directory:"
+          pwd
+          echo "Repository Contents:"
+          ls -la ~/fastapi/${{ github.event.repository.name }}
 
       - name: Set Up Python
         uses: actions/setup-python@v4
