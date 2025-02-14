@@ -71,4 +71,3 @@ async def get_book(book_id: int) -> Book:
             content="Book not found"
         )
     return book
-    
